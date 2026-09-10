@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Was das System über die Tastatur wissen muss. Der Untertyp meldet die
+     Sprache an; ohne ihn taucht die Tastatur in der Auswahl ohne Zuordnung
+     auf und die Sprachumschaltung des Systems greift nicht. -->
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:settingsActivity="de.mumafi.tastatur.EinrichtungActivity"
+    android:supportsSwitchingToNextInputMethod="true">
+  <subtype
+      android:label="@string/untertyp_deutsch"
+      android:imeSubtypeLocale="de_DE"
+      android:languageTag="de-DE"
+      android:imeSubtypeMode="keyboard"
+      android:isAsciiCapable="true"/>
+</input-method>

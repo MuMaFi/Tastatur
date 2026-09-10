@@ -1,0 +1,35 @@
+plugins { id 'com.android.application' }
+
+android {
+  namespace 'de.mumafi.tastatur'
+  compileSdk 34
+
+  defaultConfig {
+    applicationId 'de.mumafi.tastatur'
+    minSdk 26
+    targetSdk 34
+    versionCode 1
+    versionName '1.0'
+  }
+
+  buildTypes {
+    debug { debuggable true }
+    release {
+      minifyEnabled false
+      /* Ohne eigenen Schlüssel wird mit dem Fehlerschlüssel signiert; das
+         reicht zum Selbstinstallieren, nicht für den Play Store. */
+      signingConfig signingConfigs.debug
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+
+  lint { abortOnError false }
+}
+
+/* Keine Abhängigkeiten: die Tastatur zeichnet sich selbst, und für das
+   Diktat genügt android.speech aus dem System. */
+dependencies { }

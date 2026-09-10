@@ -1,0 +1,46 @@
+# Baut das APK auf einem GitHub-Läufer. In der Arbeitsumgebung geht das nicht:
+# dort fehlt das Android-SDK und Googles Auslieferung ist per Netzwerkregel
+# gesperrt. Auf ubuntu-latest ist beides vorhanden.
+#
+# Anstoßen: Actions -> "APK bauen" -> Run workflow.
+# Ergebnis: unter dem Lauf als Artefakt "tastatur-apk" zum Herunterladen.
+name: APK bauen
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['**']
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK einrichten
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle einrichten
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Bauen
+        run: gradle --no-daemon assembleDebug
+
+      - name: Umbenennen
+        run: |
+          set -eu
+          mkdir -p ausgabe
+          cp app/build/outputs/apk/debug/app-debug.apk \
+             "ausgabe/tastatur-$(date +%Y%m%d)-$(git rev-parse --short HEAD).apk"
+          ls -lh ausgabe
+
+      - name: Artefakt hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: tastatur-apk
+          path: ausgabe/*.apk
+          if-no-files-found: error
+          retention-days: 30

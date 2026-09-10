@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mikrofon, gezeichnet statt gefüllt — dasselbe Zeichen wie auf der
+     Mikrofontaste, damit man die App in der Auswahl wiedererkennt. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <path
+      android:pathData="M54,30 m-8,0 a8,8 0 0,1 16,0 l0,16 a8,8 0 0,1 -16,0 z"
+      android:strokeColor="#FFFFFF"
+      android:strokeWidth="5"
+      android:strokeLineJoin="round"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M36,46 a18,18 0 0,0 36,0"
+      android:strokeColor="#FFFFFF"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M54,64 L54,78"
+      android:strokeColor="#FFFFFF"
+      android:strokeWidth="5"
+      android:strokeLineCap="round"/>
+</vector>

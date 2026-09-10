@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dieselbe Kulisse wie im Entwurf: farbige Wolken hinter dem Glas. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <shape android:shape="rectangle">
+      <gradient android:type="linear" android:angle="270"
+          android:startColor="#EEF1F9" android:endColor="#DDE2EF"/>
+    </shape>
+  </item>
+  <item>
+    <shape android:shape="rectangle">
+      <gradient android:type="radial" android:gradientRadius="70%p"
+          android:centerX="0.16" android:centerY="0.06"
+          android:startColor="#996F9DFF" android:endColor="#006F9DFF"/>
+    </shape>
+  </item>
+  <item>
+    <shape android:shape="rectangle">
+      <gradient android:type="radial" android:gradientRadius="55%p"
+          android:centerX="0.92" android:centerY="0.20"
+          android:startColor="#99FF86BD" android:endColor="#00FF86BD"/>
+    </shape>
+  </item>
+  <item>
+    <shape android:shape="rectangle">
+      <gradient android:type="radial" android:gradientRadius="60%p"
+          android:centerX="0.55" android:centerY="1.0"
+          android:startColor="#9943D6BD" android:endColor="#0043D6BD"/>
+    </shape>
+  </item>
+</layer-list>

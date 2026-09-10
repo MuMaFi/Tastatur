@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Die Einrichtungsseite zeichnet ihren Hintergrund selbst; das Thema
+       hält nur die Systemleisten aus dem Weg. -->
+  <style name="ThemaEinrichtung" parent="@android:style/Theme.Material.Light.NoActionBar">
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowBackground">@drawable/einrichtung_grund</item>
+  </style>
+
+  <!-- Die Erlaubnis-Aktivität soll man nicht sehen: kein Fenster, kein
+       Übergang, sonst blitzt beim Diktieren eine leere Seite auf. -->
+  <style name="ThemaUnsichtbar" parent="@android:style/Theme.Translucent.NoTitleBar">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowAnimationStyle">@null</item>
+    <item name="android:windowContentOverlay">@null</item>
+  </style>
+</resources>

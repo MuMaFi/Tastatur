@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Tastatur</string>
+  <string name="untertyp_deutsch">Deutsch</string>
+
+  <string name="leertaste">Deutsch</string>
+
+  <!-- Einrichtung -->
+  <string name="einrichtung_titel">Tastatur</string>
+  <string name="einrichtung_unter">Deutsch, mit Diktat</string>
+
+  <string name="schritt_1_titel">1 · Tastatur zulassen</string>
+  <string name="schritt_1_text">In den Systemeinstellungen einschalten. Android fragt dabei einmal nach — das ist der übliche Hinweis für jede Tastatur.</string>
+  <string name="schritt_1_knopf">Einstellungen öffnen</string>
+
+  <string name="schritt_2_titel">2 · Tastatur auswählen</string>
+  <string name="schritt_2_text">Bestimmt, welche Tastatur beim Tippen erscheint.</string>
+  <string name="schritt_2_knopf">Auswahl anzeigen</string>
+
+  <string name="schritt_3_titel">3 · Mikrofon erlauben</string>
+  <string name="schritt_3_text">Nur fürs Diktieren. Ohne die Erlaubnis bleibt die Mikrofontaste stumm.</string>
+  <string name="schritt_3_knopf">Mikrofon erlauben</string>
+  <string name="schritt_3_erledigt">Erlaubt</string>
+
+  <string name="probe_titel">Ausprobieren</string>
+  <string name="probe_hinweis">Hier tippen …</string>
+
+  <!-- Diktat -->
+  <string name="diktat_bereit">Zum Diktieren auf das Mikrofon tippen</string>
+  <string name="diktat_hoert">Sprich jetzt …</string>
+  <string name="diktat_kein_mikrofon">Mikrofon nicht erlaubt — in der App nachholen</string>
+  <string name="diktat_kein_dienst">Auf diesem Gerät ist keine Spracherkennung eingerichtet</string>
+  <string name="diktat_nichts_verstanden">Nichts verstanden</string>
+  <string name="diktat_kein_netz">Keine Verbindung zur Spracherkennung</string>
+  <string name="diktat_fehler">Diktat abgebrochen</string>
+</resources>
