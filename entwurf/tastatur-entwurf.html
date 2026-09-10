@@ -1,0 +1,436 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tastatur – Entwurf</title>
+<!--
+  Entwurf der Optik. Was hier steht, steht im Android-Code als Zeichenbefehl:
+  dieselbe Superellipse, dieselben Farbwerte, dieselben Verläufe. Die Datei ist
+  die Vorlage, an der sich das Aussehen prüfen lässt, ohne ein APK zu bauen.
+
+  Aufruf: ?thema=hell|dunkel&zustand=ruhe|gedrueckt|diktat|zeichen
+-->
+<style>
+  :root {
+    --leiste: 42px;
+    --taste-h: 47px;
+    --luft: 6px;
+    --rand: 5px;
+    --r-taste: 15px;   /* Eckenmaß der Superellipse */
+    --r-panel: 28px;
+  }
+
+  /* ---- Helles Thema -------------------------------------------------
+     Das Glas färbt sich am Untergrund, aber nur so weit, dass die Tastatur
+     nicht mitschwimmt: eine Weißschicht hält sie neutral.               */
+  :root {
+    --panel-1: rgba(255,255,255,0.50);
+    --panel-2: rgba(238,241,250,0.38);
+    --panel-blur: blur(44px) saturate(150%);
+    --panel-lichtkante: rgba(255,255,255,0.85);
+
+    --taste-1: rgba(255,255,255,0.80);
+    --taste-2: rgba(255,255,255,0.46);
+    --taste-glanz: rgba(255,255,255,0.92);
+    --taste-rim-oben: rgba(255,255,255,0.98);
+    --taste-rim-unten: rgba(12,16,30,0.06);
+    --taste-brechung: rgba(255,255,255,0.85);
+    --taste-fall-1: rgba(14,18,34,0.13);
+    --taste-fall-2: rgba(14,18,34,0.07);
+
+    --neben-1: rgba(255,255,255,0.34);
+    --neben-2: rgba(255,255,255,0.15);
+
+    --schrift: #10131a;
+    --schrift-neben: rgba(22,26,36,0.72);
+    --trenner: rgba(20,24,40,0.14);
+  }
+
+  /* ---- Dunkles Thema ------------------------------------------------ */
+  [data-thema="dunkel"] {
+    --panel-1: rgba(30,33,44,0.52);
+    --panel-2: rgba(14,16,22,0.44);
+    --panel-blur: blur(44px) saturate(160%) brightness(0.92);
+    --panel-lichtkante: rgba(255,255,255,0.18);
+
+    --taste-1: rgba(255,255,255,0.20);
+    --taste-2: rgba(255,255,255,0.075);
+    --taste-glanz: rgba(255,255,255,0.32);
+    --taste-rim-oben: rgba(255,255,255,0.40);
+    --taste-rim-unten: rgba(0,0,0,0.22);
+    --taste-brechung: rgba(255,255,255,0.38);
+    --taste-fall-1: rgba(0,0,0,0.38);
+    --taste-fall-2: rgba(0,0,0,0.22);
+
+    --neben-1: rgba(255,255,255,0.10);
+    --neben-2: rgba(255,255,255,0.035);
+
+    --schrift: #f6f7fa;
+    --schrift-neben: rgba(246,247,250,0.78);
+    --trenner: rgba(255,255,255,0.16);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    margin: 0; overflow: hidden;
+    font: 400 15px/1.4 -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+    color: var(--schrift);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Kulisse — ohne etwas dahinter sieht man dem Glas nicht an, dass es Glas ist. */
+  .kulisse {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(90% 55% at 15% 6%, #6f9dff 0%, transparent 60%),
+      radial-gradient(75% 45% at 92% 18%, #ff86bd 0%, transparent 58%),
+      radial-gradient(85% 50% at 45% 62%, #ffd27a 0%, transparent 62%),
+      radial-gradient(110% 60% at 60% 104%, #43d6bd 0%, transparent 60%),
+      linear-gradient(#eef1f9, #dde2ef);
+  }
+  [data-thema="dunkel"] .kulisse {
+    background:
+      radial-gradient(90% 55% at 15% 6%, #2748a8 0%, transparent 60%),
+      radial-gradient(75% 45% at 92% 18%, #7b1f56 0%, transparent 58%),
+      radial-gradient(85% 50% at 45% 62%, #8a5a10 0%, transparent 62%),
+      radial-gradient(110% 60% at 60% 104%, #0d5f54 0%, transparent 60%),
+      linear-gradient(#0f1117, #05060a);
+  }
+
+  .gespraech { position: fixed; inset: 0; padding: 20px 16px; }
+  .blase {
+    max-width: 76%; margin-bottom: 10px; padding: 10px 14px;
+    border-radius: 20px; font-size: 14.5px;
+    background: rgba(255,255,255,0.66); color: #10131a;
+    backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 8px rgba(14,18,34,0.10);
+  }
+  .blase.ich { margin-left: auto; background: rgba(72,116,255,0.86); color: #fff; }
+  [data-thema="dunkel"] .blase { background: rgba(255,255,255,0.13); color: #f6f7fa;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 2px 8px rgba(0,0,0,0.35); }
+  [data-thema="dunkel"] .blase.ich { background: rgba(78,116,255,0.75); }
+
+  /* ---- Tastaturfeld -------------------------------------------------- */
+  .tastatur {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    padding: 0 var(--rand) 0;
+    border-radius: var(--r-panel) var(--r-panel) 0 0;
+    background: linear-gradient(var(--panel-1), var(--panel-2));
+    backdrop-filter: var(--panel-blur);
+    -webkit-backdrop-filter: var(--panel-blur);
+    box-shadow:
+      inset 0 1px 0 var(--panel-lichtkante),
+      inset 0 -60px 60px -60px rgba(0,0,0,0.10),
+      0 -1px 0 rgba(255,255,255,0.25),
+      0 -18px 50px rgba(8,12,24,0.22);
+  }
+
+  /* Kopfzeile: Vorschläge, beim Diktat der Zwischenstand. */
+  .leiste {
+    height: var(--leiste); display: flex; align-items: center;
+    padding: 0 4px; gap: 0; font-size: 14px; color: var(--schrift);
+  }
+  .vorschlag {
+    flex: 1 1 0; text-align: center; padding: 6px 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    position: relative;
+  }
+  .vorschlag + .vorschlag::before {
+    content: ""; position: absolute; left: 0; top: 22%; bottom: 22%;
+    width: 1px; background: var(--trenner);
+  }
+  .vorschlag.stark { font-weight: 600; }
+
+  .diktatzeile { display: none; align-items: center; gap: 9px; width: 100%; padding: 0 8px; }
+  [data-zustand="diktat"] .diktatzeile { display: flex; }
+  [data-zustand="diktat"] .vorschlag { display: none; }
+  .diktattext {
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 14.5px;
+  }
+  .diktattext em { font-style: normal; opacity: 0.45; }  /* noch nicht bestätigt */
+  .pegel { display: flex; align-items: center; gap: 2.5px; height: 20px; flex: none; }
+  .pegel i {
+    width: 3px; border-radius: 2px; display: block;
+    background: linear-gradient(#ff8aa8, #ff3d70);
+    box-shadow: 0 0 6px rgba(255,61,112,0.55);
+  }
+
+  /* ---- Tasten -------------------------------------------------------- */
+  .zeile { display: flex; gap: var(--luft); margin-bottom: var(--luft); }
+
+  .taste {
+    flex: 1 1 0; height: var(--taste-h); position: relative;
+    /* Der Fall liegt am Rahmen, damit er der Superellipse folgt und nicht
+       vom Beschnitt abgeschnitten wird. */
+    filter: drop-shadow(0 1px 1px var(--taste-fall-1))
+            drop-shadow(0 3px 7px var(--taste-fall-2));
+  }
+  .glas {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(var(--taste-1), var(--taste-2));
+    /* Jede Taste ist eine eigene Linse: sie sammelt den Untergrund noch
+       einmal ein, sonst wäre sie nur eine weiße Fläche auf mattem Glas. */
+    backdrop-filter: blur(9px) saturate(200%) brightness(1.10);
+    -webkit-backdrop-filter: blur(9px) saturate(200%) brightness(1.10);
+    /* clip-path wird per Skript als Superellipse gesetzt. */
+    box-shadow:
+      inset 0 1.1px 0 var(--taste-rim-oben),
+      inset 0 -1.1px 0 var(--taste-rim-unten);
+    transition: transform .09s ease-out, filter .09s ease-out;
+  }
+  /* Glanz: Licht von oben links, nur über der oberen Hälfte. */
+  .glas::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 58%;
+    background: linear-gradient(168deg, var(--taste-glanz) 0%,
+                rgba(255,255,255,0.18) 42%, rgba(255,255,255,0) 78%);
+    pointer-events: none;
+  }
+  /* Brechung: das Licht sammelt sich an der unteren Innenkante. */
+  .glas::after {
+    content: ""; position: absolute; left: 14%; right: 14%; bottom: 1.5px; height: 1.2px;
+    border-radius: 1px;
+    background: linear-gradient(90deg, transparent, var(--taste-brechung) 50%, transparent);
+    pointer-events: none;
+  }
+
+  .zeichen {
+    position: relative; z-index: 1;
+    font-size: 21px; font-weight: 400; letter-spacing: 0.2px;
+    color: var(--schrift);
+  }
+  .taste.neben .glas { background: linear-gradient(var(--neben-1), var(--neben-2)); }
+  .taste.neben .zeichen { font-size: 15px; font-weight: 500; color: var(--schrift-neben); }
+  .taste.neben svg { fill: none; stroke: var(--schrift-neben); }
+
+  .taste.breit { flex-grow: 1.52; }
+  .taste.leer  { flex-grow: 4.6; }
+  /* Die Leertaste tritt am weitesten zurück — sie ist die größte Fläche,
+     und in Weiß wäre sie ein Balken quer durch die Tastatur. */
+  .taste.leer .glas { background: linear-gradient(var(--neben-1), var(--neben-2)); }
+  .taste.leer .zeichen {
+    font-size: 11.5px; font-weight: 500; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--schrift-neben); opacity: 0.65;
+  }
+  /* Alle Zeichen sind gezeichnet, nicht gefüllt — sonst wird aus dem
+     Rücklaufpfeil ein Klecks. */
+  .taste svg {
+    position: relative; z-index: 1;
+    fill: none; stroke: var(--schrift);
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  /* Gedrückt: die Taste sinkt ein, das Glas wird heller. */
+  .taste.gedrueckt .glas {
+    background: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,0.88));
+    transform: scale(0.965);
+    filter: brightness(1.06);
+  }
+  [data-thema="dunkel"] .taste.gedrueckt .glas {
+    background: linear-gradient(rgba(255,255,255,0.42), rgba(255,255,255,0.25));
+  }
+
+  /* Umschalt eingerastet */
+  .taste.aktiv .glas { background: linear-gradient(rgba(255,255,255,0.95), rgba(236,242,255,0.78)); }
+  .taste.aktiv svg { stroke: #2f6bff; fill: rgba(47,107,255,0.16); }
+  [data-thema="dunkel"] .taste.aktiv .glas { background: linear-gradient(rgba(120,160,255,0.42), rgba(90,120,255,0.24)); }
+  [data-thema="dunkel"] .taste.aktiv svg { stroke: #cbd9ff; fill: rgba(203,217,255,0.28); }
+
+  /* Eingabetaste: Glas wie die anderen, nur das Zeichen trägt den Akzent.
+     Zwei gefüllte Farbtasten nebeneinander streiten sich sonst. */
+  .taste.eingabe .glas { background: linear-gradient(var(--neben-1), var(--neben-2)); }
+  .taste.eingabe svg { stroke: #3a6bff; stroke-width: 2; }
+  .taste.eingabe .wort { font-size: 13.5px; font-weight: 600; color: #3a6bff; }
+  [data-thema="dunkel"] .taste.eingabe svg { stroke: #8ea9ff; }
+  [data-thema="dunkel"] .taste.eingabe .wort { color: #8ea9ff; }
+
+  /* ---- Mikrofon ------------------------------------------------------ */
+  .taste.mikro .glas {
+    background: linear-gradient(150deg, rgba(150,130,255,0.95), rgba(88,96,246,0.86) 55%, rgba(64,72,225,0.9));
+  }
+  .taste.mikro svg { stroke: #fff; fill: none; }
+  .taste.mikro.hoert .glas {
+    background: linear-gradient(150deg, rgba(255,138,168,0.97), rgba(255,61,112,0.9) 55%, rgba(226,32,88,0.94));
+  }
+  .taste.mikro.hoert { filter: drop-shadow(0 0 10px rgba(255,61,112,0.55)) drop-shadow(0 2px 6px rgba(120,10,40,0.4)); }
+
+  /* Vorschau über der gedrückten Taste */
+  .vorschau {
+    position: absolute; z-index: 5; display: none;
+    align-items: center; justify-content: center;
+    background: linear-gradient(rgba(255,255,255,0.99), rgba(255,255,255,0.86));
+    backdrop-filter: blur(10px) saturate(180%);
+    box-shadow: inset 0 1.2px 0 rgba(255,255,255,1), 0 6px 18px rgba(14,18,34,0.28);
+    font-size: 27px; color: var(--schrift);
+  }
+  [data-thema="dunkel"] .vorschau {
+    background: linear-gradient(rgba(255,255,255,0.30), rgba(255,255,255,0.17));
+    box-shadow: inset 0 1.2px 0 rgba(255,255,255,0.5), 0 6px 18px rgba(0,0,0,0.5);
+  }
+
+  /* Fußsteg wie bei Telefonen ohne Knopf */
+  .steg { height: 22px; display: flex; align-items: center; justify-content: center; }
+  .steg i {
+    display: block; width: 118px; height: 4.5px; border-radius: 3px;
+    background: rgba(20,24,40,0.30);
+  }
+  [data-thema="dunkel"] .steg i { background: rgba(255,255,255,0.34); }
+</style>
+
+<div class="kulisse"></div>
+
+<div class="gespraech">
+  <div class="blase">Kommst du morgen mit an den See?</div>
+  <div class="blase ich">Klar — ich bring was zu essen mit.</div>
+  <div class="blase">Perfekt. Um zehn am Steg?</div>
+</div>
+
+<div class="tastatur" id="tastatur">
+  <div class="leiste">
+    <span class="vorschlag">Um</span>
+    <span class="vorschlag stark">Ja</span>
+    <span class="vorschlag">Passt</span>
+    <span class="diktatzeile">
+      <span class="pegel" id="pegel"></span>
+      <span class="diktattext">wir treffen uns um zehn <em>am Steg</em></span>
+    </span>
+  </div>
+  <div id="felder"></div>
+  <div class="steg"><i></i></div>
+</div>
+
+<div class="vorschau" id="vorschau"></div>
+
+<script>
+  /* ---- Zeichen der Icons ------------------------------------------- */
+  const icons = {
+    umschalt: '<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 3.6 4.6 11.2h3.6v6.1c0 .6.5 1.1 1.1 1.1h5.4c.6 0 1.1-.5 1.1-1.1v-6.1h3.6z"/></svg>',
+    loeschen: '<svg width="25" height="22" viewBox="0 0 26 24"><path d="M9.1 4.8h12.3c.9 0 1.6.7 1.6 1.6v11.2c0 .9-.7 1.6-1.6 1.6H9.1L2.6 12z"/><path d="M12.7 9.4l5.2 5.2M17.9 9.4l-5.2 5.2"/></svg>',
+    /* Rücklaufpfeil: waagerechter Schaft, kurzer Aufstieg, Spitze genau am
+       Schaftende. Die Form sitzt bewusst etwas oberhalb der Mitte — das
+       L liegt sonst optisch zu tief in der Taste. */
+    eingabe: '<svg width="21" height="21" viewBox="0 0 24 24"><path d="M17.8 6.9v4.9a2.1 2.1 0 0 1-2.1 2.1H7.3"/><path d="m10.7 10.4-3.6 3.5 3.6 3.5"/></svg>',
+    mikro: '<svg width="21" height="21" viewBox="0 0 24 24"><rect x="9" y="2.6" width="6" height="11.2" rx="3"/><path d="M5.4 11.4a6.6 6.6 0 0 0 13.2 0M12 18v3.2"/></svg>',
+    welt: '<svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2M12 3.4c2.2 2.4 3.3 5.4 3.3 8.6s-1.1 6.2-3.3 8.6c-2.2-2.4-3.3-5.4-3.3-8.6S9.8 5.8 12 3.4z"/></svg>',
+  };
+
+  /* ---- Belegungen ---------------------------------------------------
+     Dieselbe Aufteilung wie später in Belegung.java.                   */
+  const buchstaben = [
+    ['q','w','e','r','t','z','u','i','o','p','ü'],
+    ['a','s','d','f','g','h','j','k','l','ö','ä'],
+    [['umschalt','neben breit'],'y','x','c','v','b','n','m','ß',['loeschen','neben breit']],
+    [['?123','neben breit'],['welt','neben'],['mikro','mikro'],['Deutsch','leer'],['.',''],['eingabe','eingabe']],
+  ];
+  const zeichen = [
+    ['1','2','3','4','5','6','7','8','9','0'],
+    ['@','#','€','%','&','-','+','(',')','/'],
+    [['=\\<','neben breit'],'*','"','\'',':',';','!','?',['loeschen','neben breit']],
+    [['ABC','neben breit'],['welt','neben'],['mikro','mikro'],['Deutsch','leer'],['.',''],['eingabe','eingabe']],
+  ];
+
+  const p = new URLSearchParams(location.search);
+  const thema = p.get('thema') || 'hell';
+  const zustand = p.get('zustand') || 'ruhe';
+  /* Android nennt über EditorInfo.imeOptions den Zweck der Eingabetaste.
+     Gibt es einen, steht er als Wort auf der Taste; sonst der Pfeil. */
+  const eingabewort = p.get('enter');
+  document.documentElement.dataset.thema = thema;
+  document.documentElement.dataset.zustand = zustand;
+
+  const felder = document.getElementById('felder');
+  const belegung = zustand === 'zeichen' ? zeichen : buchstaben;
+
+  for (const reihe of belegung) {
+    const z = document.createElement('div');
+    z.className = 'zeile';
+    for (const eintrag of reihe) {
+      const [text, klassen] = Array.isArray(eintrag) ? eintrag : [eintrag, ''];
+      const t = document.createElement('div');
+      t.className = 'taste ' + klassen;
+      const g = document.createElement('div');
+      g.className = 'glas';
+      if (text === 'eingabe' && eingabewort) {
+        const s = document.createElement('span');
+        s.className = 'zeichen wort';
+        s.textContent = eingabewort;
+        g.appendChild(s);
+      } else if (icons[text]) {
+        g.innerHTML = icons[text];
+      } else if (text) {
+        const s = document.createElement('span');
+        s.className = 'zeichen';
+        s.textContent = text;
+        g.appendChild(s);
+      }
+      t.appendChild(g);
+      t.dataset.text = text;
+      z.appendChild(t);
+    }
+    felder.appendChild(z);
+  }
+
+  /* ---- Superellipse --------------------------------------------------
+     Ein Kreisradius sieht an einer Taste immer nach Knopf aus. Die
+     Superellipse (n = 5) geht ohne Knick in die Gerade über — dieselbe
+     Formel zeichnet später Glas.java auf die Leinwand.                  */
+  function superellipse(w, h, r, n = 5) {
+    r = Math.min(r, w / 2, h / 2);
+    const schritte = 16;
+    const pts = [];
+
+    /* Ein Eckbogen läuft von der einen Kante zur anderen. `mx`/`my` geben an,
+       in welche Richtung die Ecke vom Mittelpunkt aus liegt; `zurueck` dreht
+       den Durchlauf, damit alle vier Bögen im Uhrzeigersinn aneinanderpassen. */
+    const bogen = (cx, cy, mx, my, zurueck) => {
+      for (let i = 0; i <= schritte; i++) {
+        const k = zurueck ? schritte - i : i;
+        const t = (k / schritte) * (Math.PI / 2);
+        const dx = r * Math.pow(Math.cos(t), 2 / n);
+        const dy = r * Math.pow(Math.sin(t), 2 / n);
+        pts.push([cx + mx * dx, cy + my * dy]);
+      }
+    };
+
+    bogen(r,     r,     -1, -1, false);  // oben links:   linke Kante → obere Kante
+    bogen(w - r, r,      1, -1, true);   // oben rechts:  obere Kante → rechte Kante
+    bogen(w - r, h - r,  1,  1, false);  // unten rechts: rechte Kante → untere Kante
+    bogen(r,     h - r, -1,  1, true);   // unten links:  untere Kante → linke Kante
+
+    return 'path("M' + pts.map(([x, y]) => x.toFixed(2) + ' ' + y.toFixed(2)).join('L') + 'Z")';
+  }
+
+  function beschneiden() {
+    for (const g of document.querySelectorAll('.glas, .vorschau')) {
+      const r = g.getBoundingClientRect();
+      if (!r.width) continue;
+      const radius = g.classList.contains('vorschau') ? 18 : 15;
+      g.style.clipPath = superellipse(r.width, r.height, radius);
+    }
+  }
+  beschneiden();
+
+  /* ---- Zustände für die Bildschirmfotos ------------------------------ */
+  if (zustand === 'diktat') {
+    document.querySelector('.mikro').classList.add('hoert');
+    const pegel = document.getElementById('pegel');
+    [6, 11, 17, 9, 14, 20, 8, 12].forEach(h => {
+      const i = document.createElement('i'); i.style.height = h + 'px'; pegel.appendChild(i);
+    });
+  } else if (zustand === 'gedrueckt') {
+    const t = [...document.querySelectorAll('.taste')].find(t => t.dataset.text === 'h');
+    t.classList.add('gedrueckt');
+    document.querySelector('.taste.neben.breit').classList.add('aktiv');
+    // Vorschau über der Taste
+    const v = document.getElementById('vorschau');
+    const r = t.getBoundingClientRect();
+    v.style.display = 'flex';
+    v.style.left = (r.left - 7) + 'px';
+    v.style.top = (r.top - 46) + 'px';
+    v.style.width = (r.width + 14) + 'px';
+    v.style.height = '52px';
+    v.textContent = 'h';
+    v.style.clipPath = superellipse(r.width + 14, 52, 18);
+  }
+</script>
