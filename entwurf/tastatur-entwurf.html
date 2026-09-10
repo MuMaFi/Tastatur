@@ -130,20 +130,14 @@
     height: var(--leiste); display: flex; align-items: center;
     padding: 0 4px; gap: 0; font-size: 14px; color: var(--schrift);
   }
-  .vorschlag {
-    flex: 1 1 0; text-align: center; padding: 6px 4px;
+  .hinweis {
+    padding: 0 8px; font-size: 14.5px; color: var(--schrift-neben);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    position: relative;
   }
-  .vorschlag + .vorschlag::before {
-    content: ""; position: absolute; left: 0; top: 22%; bottom: 22%;
-    width: 1px; background: var(--trenner);
-  }
-  .vorschlag.stark { font-weight: 600; }
 
-  .diktatzeile { display: none; align-items: center; gap: 9px; width: 100%; padding: 0 8px; }
+  .diktatzeile { display: none; align-items: center; gap: 9px; width: 100%; padding: 0 6px; }
   [data-zustand="diktat"] .diktatzeile { display: flex; }
-  [data-zustand="diktat"] .vorschlag { display: none; }
+  [data-zustand="diktat"] .hinweis { display: none; }
   .diktattext {
     flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     font-size: 14.5px;
@@ -287,10 +281,12 @@
 </div>
 
 <div class="tastatur" id="tastatur">
+  <!-- Keine Wortvorschläge: es gibt kein Wörterbuch dahinter, und eine
+       Leiste mit erfundenen Vorschlägen verspricht etwas, das die Tastatur
+       nicht kann. Im Ruhezustand steht dort der Hinweis, beim Diktieren der
+       Zwischenstand. -->
   <div class="leiste">
-    <span class="vorschlag">Um</span>
-    <span class="vorschlag stark">Ja</span>
-    <span class="vorschlag">Passt</span>
+    <span class="hinweis">Zum Diktieren auf das Mikrofon tippen</span>
     <span class="diktatzeile">
       <span class="pegel" id="pegel"></span>
       <span class="diktattext">wir treffen uns um zehn <em>am Steg</em></span>
